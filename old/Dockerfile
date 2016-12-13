@@ -1,9 +1,6 @@
-# Dockerfile - Debian Jessie
-# https://github.com/openresty/docker-openresty
-
 FROM debian:jessie
 
-MAINTAINER Evan Wies <evan@neomantra.net>
+MAINTAINER HuadongZuo <admin@zuohuadong.cn>
 
 # Docker Build Arguments
 ARG RESTY_VERSION="1.11.2.2"
@@ -71,6 +68,7 @@ RUN \
     && cd /tmp \
     && curl -f -L -sS https://ngxpagespeed.com/install -o install \
     && bash install -b /tmp \
+  RUN \
     && cd /tmp \
     && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
@@ -104,5 +102,13 @@ RUN \
     && ln -sf /dev/stdout /usr/local/openresty/nginx/logs/access.log \
     && ln -sf /dev/stderr /usr/local/openresty/nginx/logs/error.log
 
+
+# COPY  conf      /usr/local/openresty/nginx/
+# ADD  sites-enabled/*    /etc/openresty/nginx/conf.d/
+RUN  mkdir /home/wwwroot && mkdir /home/log && mkdir /home/log/nginx
+RUN  chown -R www-data.www-data /home/wwwroot /home/log /usr/local/openresty
+
+
+EXPOSE 80 443
 # TODO: remove any other apt packages?
 ENTRYPOINT ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]
